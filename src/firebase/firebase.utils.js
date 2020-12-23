@@ -1,4 +1,5 @@
 import Firebase from 'firebase/app';
+import 'firebase/firestore';
 import 'firebase/auth';
 
 const config = {
@@ -12,9 +13,36 @@ const config = {
   measurementId: "G-LNSKVPE1EY"
 };
 
+export const createUserProfileDocument = async (userAuth, additionalData ) => {
+  if(!userAuth) {
+    return;
+  }
+  const userRef = firestore.doc(`users/${userAuth.uid}`);
+  const snapShot = await userRef.get();
+
+  if(!snapShot.exists) {
+    const { displayName, email } = userAuth;
+    const createdAt = new Date();
+
+    try {
+      await userRef.set({
+        displayName,
+        email,
+        createdAt,
+        ...additionalData
+      })
+    } catch(error) {
+      console.log('error creating user ', error.message);
+    }
+  }
+
+  return userRef;
+};
+
 Firebase.initializeApp(config);
 
 export const auth = Firebase.auth();
+export const firestore = Firebase.firestore();
 
 const provider = new Firebase.auth.GoogleAuthProvider();
 provider.setCustomParameters({ props: 'select_account' });
