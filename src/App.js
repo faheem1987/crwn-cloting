@@ -8,9 +8,10 @@ import HomePage from './pages/homepage/homepage';
 import Shop from './pages/shop/shop';
 import Header from './components/header/header';
 import SignInAndSignUp from './pages/sign-in-and-sign-up/sign-in-and-sign-up';
-
+import CheckoutPage from './pages/checkout/checkout';
 import { auth, createUserProfileDocument } from './firebase/firebase.utils';
 import  { setCurrentUser } from './store/user/user.actions';
+import { selectCurrentUser } from './store/user/user.selectors';
 
 class App extends React.Component {
   unsubscribeFromAuth = null;
@@ -43,6 +44,7 @@ class App extends React.Component {
         <Switch>
           <Route exact path='/' component={HomePage} />
           <Route path='/shop' component={Shop} />
+          <Route exact path='/checkout' component={CheckoutPage} />
           <Route 
             exact 
             path='/signin'  
@@ -58,8 +60,8 @@ class App extends React.Component {
   }
 }
 
-const mapStateToProps = ({user}) => ({
-  currentUser: user.currentUser
+const mapStateToProps = state => ({
+  currentUser: selectCurrentUser(state)
 });
 
 const mapDispatchToProps = dispatch => ({
